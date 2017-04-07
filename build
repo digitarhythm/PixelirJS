@@ -1,0 +1,8 @@
+#!/bin/bash
+
+OPT=${1}
+if [ "$OPT" = "-w" ]; then
+    coffee -b -w -j pixelir.js -c pixelir*.coffee
+else
+    coffee -b -j pixelir.js -c pixelir*.coffee
+fi
