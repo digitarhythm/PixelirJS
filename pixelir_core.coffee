@@ -41,8 +41,8 @@ class pixelir_core
         @FPS = if (arr['fps']?) then arr['fps'] else 60
         @LAYERS = []
 
-        _CANVAS_2D = if (arr['canvas_2d']?) then arr['canvas_2d'] else 'webcanvasjs'
-        _CANVAS_3D = if (arr['canvas_3d']?) then arr['canvas_3d'] else 'webcanvasjs'
+        _CANVAS_2D = if (arr['canvas_2d']?) then arr['canvas_2d'] else 'pixelir'
+        _CANVAS_3D = if (arr['canvas_3d']?) then arr['canvas_3d'] else 'pixelir'
 
         # set canvas parameter
         bg_color = if (arr['bg_color']?) then arr['bg_color'] else undefined
@@ -59,7 +59,7 @@ class pixelir_core
 
         # create 2d canvas
         switch (_CANVAS_2D)
-            when "webcanvasjs"
+            when "pixelir"
                 if (typeof(pixelir_canvas) != 'function' || typeof(pixelir_sprite) != 'function')
                     console.log("This library required 'pixelir_sprite'.")
                     _WEBCANVAS = undefined
@@ -81,7 +81,7 @@ class pixelir_core
 
         # create 3d canvas
         switch (_CANVAS_3D)
-            when "webcanvasjs"
+            when "pixelir"
                 _WEBGL_LAYER =  (_WEBCANVAS.createCanvas {type:'gl', hidden:true}).getContext('webgl')
             when "threejs"
                 nop()
