@@ -250,3 +250,4 @@ class pixelir_canvas
         _BASE.style.height = _CANVAS_HEIGHT+"px"
         _BASE.style.left = diff_x+"px"
         _BASE.style.top = diff_y+"px"
+

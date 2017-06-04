@@ -26,6 +26,7 @@ class pixelir_core
     _DISP_LAYER = undefined
     _CANVAS_2D = undefined
     _CANVAS_3D = undefined
+    _SPRITE_LIST = {}
 
     _RAD = Math.PI / 180.0
 
@@ -74,7 +75,7 @@ class pixelir_core
                         canvas_3d: _CANVAS_3D
                         posx: posx
                         posy: posy
-                    _DISP_LAYER =  (_WEBCANVAS.createCanvas {type:'2d', hidden:false}).getContext('2d')
+                    _DISP_LAYER = (_WEBCANVAS.createCanvas {type:'2d', hidden:false}).getContext('2d')
                 @createLayer()
             when "pixijs"
                 nop()
@@ -82,7 +83,7 @@ class pixelir_core
         # create 3d canvas
         switch (_CANVAS_3D)
             when "pixelir"
-                _WEBGL_LAYER =  (_WEBCANVAS.createCanvas {type:'gl', hidden:true}).getContext('webgl')
+                _WEBGL_LAYER = (_WEBCANVAS.createCanvas {type:'gl', hidden:true}).getContext('webgl')
             when "threejs"
                 nop()
 
@@ -104,6 +105,8 @@ class pixelir_core
                 @clearLayer(context)
             _WEBCANVAS.clearCanvas(_DISP_LAYER.canvas)
             func()
+            for id, sprt of _SPRITE_LIST
+                @__drawSprite(sprt)
             @__composeLayers()
             window.requestAnimationFrame =>
                 @__behavior(func)
@@ -120,9 +123,25 @@ class pixelir_core
 #****************************************************************************
 
     #========================================================================
+    # addSprite
+    #========================================================================
+    addSprite:(sprite, layer = 0)->
+        sprite.layer = layer
+        if (!_SPRITE_LIST[sprite.spriteID]?)
+            _SPRITE_LIST[sprite.spriteID] = sprite
+
+    #========================================================================
+    # remove sprite
+    #========================================================================
+    removeSprite:(sprite)->
+        if (_SPRITE_LIST[sprite.spriteID]?)
+            delete _SPRITE_LIST[sprite.spriteID]
+
+    #========================================================================
     # draw sprite
     #========================================================================
-    drawSprite:(sprite, num = 0)->
+    __drawSprite:(sprite)->
+        num = sprite.layer
         context = @LAYERS[num]
         if (context?)
             img = sprite.image
