@@ -169,10 +169,13 @@ class pixelir_core
             sphnum = Math.floor(height / sph)
             frame_x = (index % spwnum) * spw
             frame_y = (Math.floor(index / spwnum)) * sph
+            wdir = if (sprite.wscale < 0) then -1.0 else 1.0
+            hdir = if (sprite.hscale < 0) then -1.0 else 1.0
 
             context.save()
             context.translate(sprite.x, sprite.y)
             context.rotate(sprite.rotate * _RAD)
+            context.transform(wdir, 0, 0, hdir, 0, 0)
             context.translate(-(spw * sprite.wscale) / 2, -(sph * sprite.hscale) / 2)
 
             context.drawImage(img, frame_x, frame_y, spw, sph, 0, 0, spw * sprite.wscale, sph * sprite.hscale)
