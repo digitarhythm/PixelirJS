@@ -26,6 +26,10 @@ class pixelir_sprite
     @rotate = undefined
     @layer = undefined
     @spriteID = undefined
+    @patternList = undefined
+    @patternNum = undefined
+
+    @_animetime = undefined
 
     # private variables
 
@@ -41,14 +45,15 @@ class pixelir_sprite
         @wscale = if (arr['wscale']?) then arr['wscale'] else 1.0
         @hscale = if (arr['hscale']?) then arr['hscale'] else 1.0
         @rotate = if (arr['rotate']?) then arr['rotate'] else 0.0
-        @spriteID = @__getUniqueID()
+        @patternList = if (arr['patternList']?) then arr['patternList'] else [[100, [0]]]
+        @patternNum = if (arr['patternNum']?) then arr['patternNum'] else 0
+        @spriteID = if (arr['spriteID']?) then arr['spriteID'] else undefined
+
+        JSLog(@spriteID)
+        @_animetime = new Date().getTime()
         img_width = @image.width
         img_height = @image.height
         spwnum = Math.floor(img_width / @width)
         sphnum = Math.floor(img_height / @height)
         @maxFrame = (spwnum * sphnum) - 1
 
-    __getUniqueID:->
-        S4 = ->
-            return (((1+Math.random())*0x10000)|0).toString(16).substring(1)
-        return (S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4())

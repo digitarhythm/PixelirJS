@@ -105,7 +105,8 @@ class pixelir_core
                 @clearLayer(context)
             _WEBCANVAS.clearCanvas(_DISP_LAYER.canvas)
             func()
-            for id, sprt of _SPRITE_LIST
+            for id in Object.keys(_SPRITE_LIST)
+                sprt = _SPRITE_LIST[id]
                 @__drawSprite(sprt)
             @__composeLayers()
             window.requestAnimationFrame =>
@@ -127,8 +128,7 @@ class pixelir_core
     #========================================================================
     addSprite:(sprite, layer = 0)->
         sprite.layer = layer
-        if (!_SPRITE_LIST[sprite.spriteID]?)
-            _SPRITE_LIST[sprite.spriteID] = sprite
+        _SPRITE_LIST[sprite.spriteID] = sprite
 
     #========================================================================
     # remove sprite
@@ -151,11 +151,24 @@ class pixelir_core
             sph = sprite.height
             x = sprite.x
             y = sprite.y
-            frameIndex = sprite.frameIndex
+
+            patternlist = sprite.patternList[sprite.patternNum]
+            animetime = patternlist[0]
+            animelist = patternlist[1]
+            nowepoch = new Date().getTime()
+            frameindex = sprite.frameIndex
+            if (nowepoch > sprite._animetime + animetime)
+                sprite._animetime = new Date().getTime()
+                frameindex++
+                if (frameindex >= animelist.length)
+                    frameindex = 0
+                sprite.frameIndex = frameindex
+
+            index = animelist[frameindex]
             spwnum = Math.floor(width / spw)
             sphnum = Math.floor(height / sph)
-            frame_x = (frameIndex % spwnum) * spw
-            frame_y = (Math.floor(frameIndex / spwnum)) * sph
+            frame_x = (index % spwnum) * spw
+            frame_y = (Math.floor(index / spwnum)) * sph
 
             context.save()
             context.translate(sprite.x, sprite.y)
@@ -205,6 +218,10 @@ class pixelir_core
         wscale = if (arr['wscale']?) then arr['wscale'] else 1.0
         hscale = if (arr['hscale']?) then arr['hscale'] else 1.0
         rotate = if (arr['rotate']?) then arr['rotate'] else 0.0
+        patternList = if (arr['patternList']?) then arr['patternList'] else [[100, [0]]]
+        patternNum = if (arr['patternNum']?) then arr['patternNum'] else 0
+
+        id = @__getUniqueID()
         if (typeof(pixelir_sprite) == 'function')
             sprite = new pixelir_sprite
                 x: x
@@ -218,6 +235,9 @@ class pixelir_core
                 wscale: wscale
                 hscale: hscale
                 rotate: rotate
+                patternList: patternList
+                patternNum: patternNum
+                spriteID: id
             return sprite
         else
             console.log("This method required pixelir_sprite.")
@@ -271,4 +291,12 @@ class pixelir_core
             for context in @LAYERS
                 canvas = context.canvas
                 _DISP_LAYER.drawImage(canvas, 0, 0)
+
+    #****************************************************************************
+    # get unique ID
+    #****************************************************************************
+    __getUniqueID:->
+        S4 = ->
+            return (((1+Math.random())*0x10000)|0).toString(16).substring(1).toString()
+        return (S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4())
 

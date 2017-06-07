@@ -1,5 +1,6 @@
 id = undefined
 onload =->
+    console.clear()
     width = 480
     height = 320
     app = new pixelir_core
@@ -26,8 +27,11 @@ onload =->
             y: height / 2
             image: img
             frameeIndex: 0
-            wscale: 2.0
-            hscale: 2.0
+            wscale: 1.0
+            hscale: 1.0
+            patternList: [
+                [100, [0, 1, 0, 2]]
+            ]
         sprite2 = app.newSprite
             x: 180
             y: height / 2
@@ -47,6 +51,7 @@ onload =->
         app.addSprite(sprite2, 2)
         app.addSprite(sprite3, 0)
 
+        ###
         date = new Date()
         epoc = date.getTime()
         app.enterframe ->
@@ -65,4 +70,13 @@ onload =->
                 sprite1.frameIndex += 1
                 if (sprite1.frameIndex > 2)
                     sprite1.frameIndex = 0
+        ###
+
+        app.enterframe ->
+            sprite1.x += 2
+            if (sprite1.x > app.SCREEN_WIDTH)
+                sprite1.x = 0
+            #sprite1.rotate += 36.0
+            if (sprite1.rotate > 360.0)
+                sprite1.rotate = 0.0
 
