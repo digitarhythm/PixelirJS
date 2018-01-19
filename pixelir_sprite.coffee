@@ -37,6 +37,10 @@ class pixelir_sprite
         @x = if (arr['x']?) then arr['x'] else 0
         @y = if (arr['y']?) then arr['y'] else 0
         @z = if (arr['z']?) then arr['z'] else 0
+        @xs = if (arr['xs']?) then arr['xs'] else 0
+        @ys = if (arr['ys']?) then arr['ys'] else 0
+        @zs = if (arr['zs']?) then arr['zs'] else 0
+        @gravity = if (arr['gravity']?) then arr['gravity'] else 0
         @frameIndex = if (arr['frameIndex']?) then arr['frameIndex'] else 0
         @hidden = if (arr['hidden']?) then arr['hidden'] else false
         @image = if (arr['image']?) then arr['image'] else undefined
@@ -49,7 +53,6 @@ class pixelir_sprite
         @patternNum = if (arr['patternNum']?) then arr['patternNum'] else 0
         @spriteID = if (arr['spriteID']?) then arr['spriteID'] else undefined
 
-        JSLog(@spriteID)
         @_animetime = new Date().getTime()
         img_width = @image.width
         img_height = @image.height

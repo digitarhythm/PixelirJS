@@ -2,7 +2,7 @@
 
 OPT=${1}
 if [ "$OPT" = "-w" ]; then
-    coffee -w -b -j pixelir.js -c pixelir*.coffee
+    coffee -wMb -j pixelir.js -c pixelir*.coffee
 else
-    cat pixelir*.coffee | coffee -b -c -s > pixelir.js
+    cat pixelir*.coffee | coffee -bMc -s > pixelir.js
 fi

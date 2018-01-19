@@ -76,7 +76,7 @@ class pixelir_core
                         posx: posx
                         posy: posy
                     _DISP_LAYER = (_WEBCANVAS.createCanvas {type:'2d', hidden:false}).getContext('2d')
-                @createLayer()
+                #@createLayer()
             when "pixijs"
                 nop()
 
@@ -106,8 +106,11 @@ class pixelir_core
             _WEBCANVAS.clearCanvas(_DISP_LAYER.canvas)
             func()
             for id in Object.keys(_SPRITE_LIST)
-                sprt = _SPRITE_LIST[id]
-                @__drawSprite(sprt)
+                sprite = _SPRITE_LIST[id]
+                sprite.ys += sprite.gravity
+                sprite.x += sprite.xs
+                sprite.y += sprite.ys
+                @__drawSprite(sprite)
             @__composeLayers()
             window.requestAnimationFrame =>
                 @__behavior(func)
@@ -213,6 +216,9 @@ class pixelir_core
         x = if (arr['x']?) then arr['x'] else 0
         y = if (arr['y']?) then arr['y'] else 0
         z = if (arr['z']?) then arr['z'] else 0
+        xs = if (arr['xs']?) then arr['xs'] else 0
+        ys = if (arr['ys']?) then arr['ys'] else 0
+        zs = if (arr['zs']?) then arr['zs'] else 0
         frameIndex = if (arr['frameIndex']?) then arr['frameIndex'] else 0
         hidden = if (arr['hidden']?) then arr['hidden'] else false
         image = if (arr['image']?) then arr['image'] else undefined
@@ -221,6 +227,7 @@ class pixelir_core
         wscale = if (arr['wscale']?) then arr['wscale'] else 1.0
         hscale = if (arr['hscale']?) then arr['hscale'] else 1.0
         rotate = if (arr['rotate']?) then arr['rotate'] else 0.0
+        gravity = if (arr['gravity']?) then arr['gravity'] else 0.0
         patternList = if (arr['patternList']?) then arr['patternList'] else [[100, [0]]]
         patternNum = if (arr['patternNum']?) then arr['patternNum'] else 0
 
@@ -230,6 +237,9 @@ class pixelir_core
                 x: x
                 y: y
                 z: z
+                xs: xs
+                ys: ys
+                zs: zs
                 frameIndex: frameIndex
                 hidden: hidden
                 image: image
@@ -238,6 +248,7 @@ class pixelir_core
                 wscale: wscale
                 hscale: hscale
                 rotate: rotate
+                gravity: gravity
                 patternList: patternList
                 patternNum: patternNum
                 spriteID: id
@@ -256,9 +267,9 @@ class pixelir_core
 #****************************************************************************
 #****************************************************************************
 
-    #****************************************************************************
+    #************************************************************************
     # create new layer
-    #****************************************************************************
+    #************************************************************************
     createLayer:(arr = [])->
         hidden = if (arr['hidden']?) then arr['hidden'] else false
 
@@ -266,16 +277,16 @@ class pixelir_core
         @LAYERS.push(context)
         return (@LAYERS.length) - 1
 
-    #****************************************************************************
+    #************************************************************************
     # remove layer
-    #****************************************************************************
+    #************************************************************************
     removeLayer:(num)->
         context = @LAYERS[num]
         _WEBCANVAS.removeCanvas(context.canvas) if (_WEBCANVAS?)
 
-    #****************************************************************************
+    #************************************************************************
     # clear layer
-    #****************************************************************************
+    #************************************************************************
     clearLayer:(context)->
         if (_WEBCANVAS?)
             if (!context?)
@@ -284,9 +295,9 @@ class pixelir_core
             else
                 _WEBCANVAS.clearCanvas(context.canvas)
 
-    #****************************************************************************
+    #************************************************************************
     # compose all layer to disp layer
-    #****************************************************************************
+    #************************************************************************
     __composeLayers:->
         if (_WEBGL_LAYER?)
             _DISP_LAYER.drawImage(_WEBGL_LAYER.canvas, 0, 0)
@@ -295,9 +306,9 @@ class pixelir_core
                 canvas = context.canvas
                 _DISP_LAYER.drawImage(canvas, 0, 0)
 
-    #****************************************************************************
+    #************************************************************************
     # get unique ID
-    #****************************************************************************
+    #************************************************************************
     __getUniqueID:->
         S4 = ->
             return (((1+Math.random())*0x10000)|0).toString(16).substring(1).toString()

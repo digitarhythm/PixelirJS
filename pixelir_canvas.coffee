@@ -215,13 +215,6 @@ class pixelir_canvas
         if (bg_color?)
             body.style.background = bg_color
 
-        # create base DIV
-        _BASE = document.createElement("div")
-        _BASE.style.position = "relative"
-        _BASE.style.background = canvas_color
-        _BASE.style.overflow = "hidden"
-        body.appendChild(_BASE)
-
         # set fullscreen
         if (!_DOT_BY_DOT)
             ratio = @SCREEN_WIDTH / @SCREEN_HEIGHT
@@ -246,8 +239,15 @@ class pixelir_canvas
             _CANVAS_WIDTH = @SCREEN_WIDTH
             _CANVAS_HEIGHT = @SCREEN_HEIGHT
 
+        # create base DIV
+        _BASE = document.createElement("div")
+        _BASE.style.position = "absolute"
+        _BASE.style.background = canvas_color
+        _BASE.style.overflow = "hidden"
         _BASE.style.width = _CANVAS_WIDTH+"px"
         _BASE.style.height = _CANVAS_HEIGHT+"px"
         _BASE.style.left = diff_x+"px"
         _BASE.style.top = diff_y+"px"
+
+        body.appendChild(_BASE)
 

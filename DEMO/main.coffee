@@ -10,7 +10,10 @@ onload =->
         bg_color: 'gray'
         #canvas_2d: 'pixijs'
         #canvas_3d: 'threejs'
-        #dot_by_dot: true
+        dot_by_dot: true
+        posx: 100
+        posy: 100
+    app.createLayer()
     app.createLayer()
     app.createLayer()
 
@@ -24,11 +27,13 @@ onload =->
         img = assets[keys[0]]
         sprite1 = app.newSprite
             x: 0
-            y: height / 2
+            y: height / 3
+            xs: 4
             image: img
             frameeIndex: 0
-            wscale: -1.5
-            hscale: 1.5
+            wscale: 3
+            hscale: 3
+            gravity: 1.0
             patternList: [
                 [100, [0, 1, 0, 2]]
             ]
@@ -52,10 +57,12 @@ onload =->
         app.addSprite(sprite3, 0)
 
         app.enterframe ->
-            sprite1.x += 2
             if (sprite1.x > app.SCREEN_WIDTH)
                 sprite1.x = 0
-            #sprite1.rotate += 36.0
+            if (sprite1.y > height - sprite1.height * 2)
+                sprite1.y = height - sprite1.height * 2
+                sprite1.ys *= -1
+            sprite1.rotate += 1.8
             if (sprite1.rotate > 360.0)
                 sprite1.rotate = 0.0
 
