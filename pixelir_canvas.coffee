@@ -58,6 +58,8 @@ class pixelir_canvas
         @__initCanvas
             bg_color: _BG_COLOR
             canvas_color: _CANVAS_COLOR
+        body = document.body
+        body.appendChild(_BASE)
 
 #****************************************************************************
 #****************************************************************************
@@ -90,6 +92,7 @@ class pixelir_canvas
     removeCanvas:(canvas)->
         _BASE.removeChild(canvas)
         num = _CANVASLIST.indexOf(canvas)
+        _CANVASLIST.splice(num, 1)
 
     #========================================================================
     # clear canvas
@@ -120,7 +123,7 @@ class pixelir_canvas
     #========================================================================
     __initCanvas:(arr)->
         # initialize 2D canvas
-        @__initWebcanvas()
+        return @__initWebcanvas()
 
     #========================================================================
     # create 2D canvas
@@ -249,5 +252,5 @@ class pixelir_canvas
         _BASE.style.left = diff_x+"px"
         _BASE.style.top = diff_y+"px"
 
-        body.appendChild(_BASE)
+        #return _BASE
 

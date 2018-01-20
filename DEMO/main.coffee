@@ -1,5 +1,5 @@
 id = undefined
-onload =->
+onload = ->
     console.clear()
     width = 480
     height = 320
@@ -10,9 +10,7 @@ onload =->
         bg_color: 'gray'
         #canvas_2d: 'pixijs'
         #canvas_3d: 'threejs'
-        dot_by_dot: true
-        posx: 100
-        posy: 100
+        #dot_by_dot: true
     app.createLayer()
     app.createLayer()
     app.createLayer()
@@ -21,10 +19,12 @@ onload =->
         'image/chara1.png'
     ]
 
+    # リソースデータをプリロードする
     app.preload resource
     , (assets)->
         keys = Object.keys(assets)
         img = assets[keys[0]]
+
         sprite1 = app.newSprite
             x: 0
             y: height / 3
@@ -37,6 +37,7 @@ onload =->
             patternList: [
                 [100, [0, 1, 0, 2]]
             ]
+
         sprite2 = app.newSprite
             x: 180
             y: height * 0.4
@@ -45,6 +46,7 @@ onload =->
             image: img
             wscale: -1.5
             hscale: -1.5
+
         sprite3 = app.newSprite
             x: width - 140
             y: height * 0.6

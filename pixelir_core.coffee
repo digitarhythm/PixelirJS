@@ -205,7 +205,6 @@ class pixelir_core
     preload:(assets_list, func)->
         if (!assets_list?)
             return undefined
-
         @ASSETS = {}
         @__loadImages(assets_list, func)
 
