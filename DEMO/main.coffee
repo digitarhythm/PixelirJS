@@ -1,70 +1,152 @@
-id = undefined
+RAD = Math.PI / 180
+
 onload = ->
-    console.clear()
-    width = 480
-    height = 320
-    app = new pixelir_core
-        screen_width: width
-        screen_height: height
-        canvas_color: 'black'
-        bg_color: 'gray'
-        #canvas_2d: 'pixijs'
-        #canvas_3d: 'threejs'
-        #dot_by_dot: true
-    app.createLayer()
-    app.createLayer()
-    app.createLayer()
+  console.clear()
+  width = 1920
+  height = 1080
+  fps = 60
+  cube = undefined
 
-    resource = [
-        'image/chara1.png'
-    ]
+  app = new pixelir_core
+    screen_width: width
+    screen_height: height
+    bg_color: "gray"
+    stage_color: "black"
+    fps: fps
 
-    # リソースデータをプリロードする
-    app.preload resource
-    , (assets)->
-        keys = Object.keys(assets)
-        img = assets[keys[0]]
+  resources = [
+    ['chara1', 'objects/chara1.png']
+    ['chara0', 'objects/chara0.png']
+    ['aircraft', 'objects/E-45-Aircraft/Aircraft_dae.dae']
+    ['droid', 'objects/droid.dae']
+    ['negimiku', 'objects/negimiku.dae']
+  ]
 
-        sprite1 = app.newSprite
-            x: 0
-            y: height / 3
-            xs: 4
-            image: img
-            frameeIndex: 0
-            wscale: 3
-            hscale: 3
-            gravity: 1.0
-            patternList: [
-                [100, [0, 1, 0, 2]]
-            ]
+  ret = app.createLayer()
 
-        sprite2 = app.newSprite
-            x: 180
-            y: height * 0.4
-            width: 160
-            height: 96
-            image: img
-            wscale: -1.5
-            hscale: -1.5
+  # リソースデータをプリロードする
+  app.preload resources, (assets) ->
+    cube = app.newSprite
+      x: 0
+      y: 1000
+      z: 0
+      orgscale: 30
+      object: 'primitive_cube'
+      color: '0xff9000'
+      xscale: 30
+      yscale: 30
+      zscale: 30
+      xs: (random(8) - 4) * 10
+      zs: (random(8) - 4) * 10
+      gravity: -10
+    app.addSprite(cube)
 
-        sprite3 = app.newSprite
-            x: width - 140
-            y: height * 0.6
-            width: 160
-            height: 96
-            image: img
+    ground = app.newSprite
+      y: -100
+      orgscale: 300
+      object: 'primitive_plane'
+      color: '0x0090ff'
+      xrotate: 90
+    app.addSprite(ground)
 
-        app.addSprite(sprite1, 1)
-        app.addSprite(sprite2, 2)
-        app.addSprite(sprite3, 0)
+    sprites = []
+    for i in [0...30]
+      kind = random(1)
+      img = assets[resources[kind][0]]
+      size = (random(5) + 5) / 1
+      sprite = app.newSprite
+        x: random(width)
+        y: random(90)+10
+        xs: random(2) + 2
+        object: img
+        xscale: size
+        yscale: size
+        gravity: (random(9)+1)/10
+        width: 32
+        height: 32
+        patternNum: random(2)
+        patternList: [
+          [100, [10, 11, 10, 12]]
+          [100, [5, 6, 5, 7]]
+          [100, [0, 1, 0, 2]]
+        ]
+      if (kind == 0)
+        app.addSprite(sprite, 0)
+      else
+        app.addSprite(sprite)
+      sprites.push(sprite)
 
-        app.enterframe ->
-            if (sprite1.x > app.SCREEN_WIDTH)
-                sprite1.x = 0
-            if (sprite1.y > height - sprite1.height * 2)
-                sprite1.y = height - sprite1.height * 2
-                sprite1.ys *= -1
-            sprite1.rotate += 1.8
-            if (sprite1.rotate > 360.0)
-                sprite1.rotate = 0.0
+    for i in [0...100]
+      kind = random(1)
+      scale = (random(13) + 3) / 3
+      sprite = app.newSprite
+        x: random(width*2) - width
+        y: random(50)+70
+        z: random(width*8) - width*4
+        xs: (random(8) - 4) * 2
+        zs: (random(8) - 4) * 2
+        gravity: 3
+        orgscale: ((kind * 120) + 10) * 1
+        xscale: scale
+        yscale: scale
+        zscale: scale
+        xrotate: 0
+        yrotate: 0
+        zrotate: 0
+        object: if (kind == 0) then assets['negimiku'] else assets['droid']
+      app.addSprite(sprite)
+      sprites.push(sprite)
+
+    camera_radius = 0
+    camera_x = 5000
+    camera_y = 5000
+    camera_z = 5000
+    app.CAMERA3D.position.set(camera_x, camera_y, camera_z)
+    app.enterframe ->
+      #camera_x = Math.cos(camera_radius * RAD) * 5000
+      #camera_y = 3000
+      #camera_z = Math.sin(camera_radius * RAD) * 5000
+      #camera_radius = ++camera_radius % 360
+      app.CAMERA3D.lookAt(cube.x, cube.y, cube.z)
+      for sprite in sprites
+        if (sprite.object.type == 'image')
+          sprite.rotate--
+          if (sprite.x < 0)
+            sprite.x = width
+          if (sprite.x > width)
+            sprite.x = 0
+          if (sprite.y > height-(sprite.height/2))
+            sprite.y = height-(sprite.height/2)
+            sprite.ys *= -1
+        else
+          sprite.xrotate++
+          sprite.yrotate++
+          sprite.zrotate++
+          if (sprite.x < -width*3)
+            sprite.x = width*3
+          if (sprite.x > width*3)
+            sprite.x = -width*3
+          if (sprite.z < -width*6)
+            sprite.z = width*6
+          if (sprite.z > width*6)
+            sprite.z = -width*6
+          if (sprite.y < 0)
+            sprite.y = 0
+            sprite.ys = (random(64)+32)
+
+      if (cube.x < -width*3)
+        cube.x = -width*3
+        cube.xs *= -1
+      if (cube.x > width*3)
+        cube.x = width*3
+        cube.xs *= -1
+      if (cube.z < -width*3)
+        cube.z = -width*3
+        cube.zs *= -1
+      if (cube.z > width*3)
+        cube.z = width*3
+        cube.zs *= -1
+      if (cube.y < 0)
+        cube.y = 0
+        cube.ys = (random(256)+32)
 
