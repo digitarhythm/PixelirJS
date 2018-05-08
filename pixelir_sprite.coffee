@@ -157,7 +157,6 @@ class pixelir_sprite
       # Collada
       #========================================================================
       when 'collada'
-        @gravity *= -1
         @mesh = @object.object.clone()
         @mesh.castShadow = true
         @mesh.receiveShadow = true

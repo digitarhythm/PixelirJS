@@ -111,7 +111,10 @@ class pixelir_core
 
       # character draw
       for id, sprite of @SPRITE_LIST
-        sprite.ys += sprite.gravity
+        if (sprite.object.type == 'image')
+          sprite.ys += sprite.gravity
+        else
+          sprite.ys -= sprite.gravity
         sprite.x += sprite.xs
         sprite.y += sprite.ys
         sprite.z += sprite.zs
@@ -177,8 +180,8 @@ class pixelir_core
   __drawSprite:(sprite)->
     switch (sprite.object.type)
       when 'image'
-        x = parseInt(-(@SCREEN_WIDTH / 2) + sprite.x)
-        y = parseInt((@SCREEN_HEIGHT / 2) - sprite.y)
+        x = parseInt(-(@SCREEN_WIDTH / 2.0) + sprite.x)
+        y = parseInt((@SCREEN_HEIGHT / 2.0) - sprite.y)
         z = 0
 
         patternlist = sprite.patternList[sprite.patternNum]
@@ -260,17 +263,17 @@ class pixelir_core
   # create new sprite
   #========================================================================
   newSprite:(arr)->
-    x = if (arr['x']?) then arr['x'] else 0
-    y = if (arr['y']?) then arr['y'] else 0
-    z = if (arr['z']?) then arr['z'] else 0
-    xs = if (arr['xs']?) then arr['xs'] else 0
-    ys = if (arr['ys']?) then arr['ys'] else 0
-    zs = if (arr['zs']?) then arr['zs'] else 0
+    x = if (arr['x']?) then arr['x'] else 0.0
+    y = if (arr['y']?) then arr['y'] else 0.0
+    z = if (arr['z']?) then arr['z'] else 0.0
+    xs = if (arr['xs']?) then arr['xs'] else 0.0
+    ys = if (arr['ys']?) then arr['ys'] else 0.0
+    zs = if (arr['zs']?) then arr['zs'] else 0.0
     frameIndex = if (arr['frameIndex']?) then arr['frameIndex'] else 0
     hidden = if (arr['hidden']?) then arr['hidden'] else false
     object = if (arr['object']?) then arr['object'] else undefined
-    width = if (arr['width']?) then arr['width'] else 32
-    height = if (arr['height']?) then arr['height'] else 32
+    width = if (arr['width']?) then arr['width'] else 32.0
+    height = if (arr['height']?) then arr['height'] else 32.0
     orgscale = if (arr['orgscale']?) then arr['orgscale'] else 1.0
     rotate = if (arr['rotate']?) then arr['rotate'] else 0.0
     xrotate = if (arr['xrotate']?) then arr['xrotate'] else undefined
@@ -287,6 +290,7 @@ class pixelir_core
     patternList = if (arr['patternList']?) then arr['patternList'] else [[100, [0]]]
     patternNum = if (arr['patternNum']?) then arr['patternNum'] else 0
 
+    # object is primitive
     if (typeof(object) == 'string')
       match = object.match(/^primitive_(.*)$/)
       if (match?)
@@ -299,12 +303,12 @@ class pixelir_core
 
     id = @__getUniqueID()
     sprite = new pixelir_sprite
-      x: x
-      y: y
-      z: z
-      xs: xs
-      ys: ys
-      zs: zs
+      x: parseFloat(x)
+      y: parseFloat(y)
+      z: parseFloat(z)
+      xs: parseFloat(xs)
+      ys: parseFloat(ys)
+      zs: parseFloat(zs)
       frameIndex: frameIndex
       hidden: hidden
       object: object
@@ -445,16 +449,19 @@ class pixelir_core
     #============================================================================
     ambientlight = new THREE.AmbientLight(0xffffff, 0.5)
     ambientlight.position.set(100000, 100000, 100000)
+
     directionallight = new THREE.DirectionalLight(0xffffff, 0.5)
     directionallight.position.set(100000, 100000, 100000)
     directionallight.shadow.mapSize.width = 512
     directionallight.shadow.mapSize.height = 512
     directionallight.shadow.camera.near = 0.5
     directionallight.shadow.camera.far = 500
+
     #spotlight = new THREE.SpotLight(0x33ccff)
     #spotlight.position.set(0, 1000, 1000)
     #spotlight.target.position.set(0, 0, 0)
     #spotlight.shadowCameraVisible = true
+
     @LIGHTS =
       ambient: ambientlight
       directional: directionallight
@@ -463,7 +470,6 @@ class pixelir_core
     @LAYERS.layer3d.add(ambientlight)
     @LAYERS.layer3d.add(directionallight)
     #@LAYERS.layer3d.add(spotlight)
-    ambientlight.castShadow = true
     directionallight.castShadow = true
     #spotlight.castShadow = true
 

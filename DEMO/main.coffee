@@ -38,7 +38,7 @@ onload = ->
       zscale: 30
       xs: (random(8) - 4) * 10
       zs: (random(8) - 4) * 10
-      gravity: -10
+      gravity: 30
     app.addSprite(cube)
 
     ground = app.newSprite
@@ -85,7 +85,7 @@ onload = ->
         z: random(width*8) - width*4
         xs: (random(8) - 4) * 2
         zs: (random(8) - 4) * 2
-        gravity: 3
+        gravity: 30
         orgscale: ((kind * 120) + 10) * 1
         xscale: scale
         yscale: scale
@@ -132,7 +132,7 @@ onload = ->
             sprite.z = -width*6
           if (sprite.y < 0)
             sprite.y = 0
-            sprite.ys = (random(64)+32)
+            sprite.ys = (random(256)+128)
 
       if (cube.x < -width*3)
         cube.x = -width*3
@@ -148,5 +148,5 @@ onload = ->
         cube.zs *= -1
       if (cube.y < 0)
         cube.y = 0
-        cube.ys = (random(256)+32)
+        cube.ys = (random(512)+256)
 
