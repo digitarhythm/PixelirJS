@@ -452,26 +452,33 @@ class pixelir_core
 
     directionallight = new THREE.DirectionalLight(0xffffff, 0.5)
     directionallight.position.set(100000, 100000, 100000)
-    directionallight.shadow.mapSize.width = 512
-    directionallight.shadow.mapSize.height = 512
+    directionallight.castShadow = true
+    directionallight.shadow.mapSize.width = 2048
+    directionallight.shadow.mapSize.height = 2048
     directionallight.shadow.camera.near = 0.5
     directionallight.shadow.camera.far = 500
 
-    #spotlight = new THREE.SpotLight(0x33ccff)
-    #spotlight.position.set(0, 1000, 1000)
-    #spotlight.target.position.set(0, 0, 0)
-    #spotlight.shadowCameraVisible = true
+    spotlight = new THREE.SpotLight(0xffffff)
+    #spotlight = new THREE.SpotLight(0xFFFFFF, 2, 100, Math.PI / 4, 1)
+    spotlight.shadow.mapSize.width = 2048
+    spotlight.shadow.mapSize.height = 2048
+    spotlight.position.set(0, 1000, 0)
+    spotlight.target.position.set(0, 0, 0)
+    spotlight.shadowCameraVisible = true
 
     @LIGHTS =
       ambient: ambientlight
       directional: directionallight
-      #spotlight: spotlight
+      spotlight: spotlight
+
     @LAYERS.layer3d = new THREE.Scene()
-    @LAYERS.layer3d.add(ambientlight)
+    #@LAYERS.layer3d.add(ambientlight)
     @LAYERS.layer3d.add(directionallight)
-    #@LAYERS.layer3d.add(spotlight)
+    @LAYERS.layer3d.add(spotlight)
+
+    ambientlight.castShadow = true
     directionallight.castShadow = true
-    #spotlight.castShadow = true
+    spotlight.castShadow = true
 
     @LAYERS.background = new THREE.Scene()
 

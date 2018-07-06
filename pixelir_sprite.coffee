@@ -115,6 +115,7 @@ class pixelir_sprite
           transparent:true
         @mesh = new THREE.Mesh(@geometry, material)
         @mesh.rotation.z = @rotate * RAD
+        @mesh.castShadow = true
         @texture.needsUpdate = true
 
       #========================================================================
@@ -126,7 +127,8 @@ class pixelir_sprite
           when 'plane'
             @geometry = new THREE.PlaneGeometry(@width * @orgscale * @xscale, @height * @orgscale * @yscale, @xsegments, @ysegments)
             #material = new THREE.MeshPhongMaterial
-            material = new THREE.MeshLambertMaterial
+            #material = new THREE.MeshLambertMaterial
+            material = new THREE.MeshStandardMaterial
               color: parseInt(@color, 16)
               specular: 0x999999
               shininess: 60
@@ -141,9 +143,10 @@ class pixelir_sprite
             @mesh.rotation.z = @zrotate * RAD if (@zrotate?)
           when 'cube'
             @geometry = new THREE.BoxGeometry(@orgscale * @xscale, @orgscale * @yscale, @orgscale * @zscale)
-            material = new THREE.MeshLambertMaterial
+            #material = new THREE.MeshLambertMaterial
+            material = new THREE.MeshStandardMaterial
               color: parseInt(@color, 16)
-              transparent:true
+              transparent: true
             @mesh = new THREE.Mesh(@geometry, material)
             @mesh.castShadow = true
             @mesh.receiveShadow = true
